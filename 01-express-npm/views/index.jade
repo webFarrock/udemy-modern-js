@@ -4,4 +4,10 @@ html
         link(rel="stylesheet", href="/styles.css")
     body
         .site-wrap
-            h1 Hello, World! jade template!
+            .chat-list
+                ul
+            .chat-form
+                input(type="text", placeholder="message")
+
+        script(src="/socket.io/socket.io.js")
+        script(src="/app.js")
