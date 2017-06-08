@@ -10,20 +10,8 @@ app.set('view engine', 'jade');
 
 
 
-app.use((req, res, next) => {
-    console.log('in middleware 1');
-    next();
-    console.log('out middleware 1');
-});
-
 app.use(express.static('./public'));
 
-app.use((req, res, next) => {
-    console.log('--- in middleware 2');
-
-    next();
-    console.log('--- out middleware 2');
-});
 
 app.get('/', (req, res) => {
     res.end('Hello, world');
@@ -36,6 +24,22 @@ app.get('/home', (req, res) => {
 
 const server = new http.Server(app);
 const io = socketIo(server);
+
+io.on('connection', socket => {
+    console.log('Client connected!');
+    
+    socket.on('chat:add', data => {
+        console.log('onserver data: ', data);
+        io.emit('chat:added', data);
+    });
+    
+    socket.on('disconnect', () => {
+        console.log('Socket disconnected');
+    });
+    
+});
+
+
 
 
 server.listen(port, () => {

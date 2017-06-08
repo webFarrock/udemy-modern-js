@@ -36,7 +36,7 @@ body{
     border-top: 5px solid #aaa;
 }
 
-site-wrap .chat-form input{
+.site-wrap .chat-form input{
     padding: 5px;
     width:100%;
     box-sizing: border-box;
