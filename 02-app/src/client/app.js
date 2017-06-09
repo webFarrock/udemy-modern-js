@@ -1,8 +1,7 @@
 import $ from 'jquery';
-import {blegh} from 'shared/test';
 import './app.scss';
 
-blegh();
+if(module.hot){
+    module.hot.accept();
+}
 
-
-$('body').html('A;LKSJA;SLDKFJ');

@@ -62,13 +62,13 @@ function devServerReload(){
         watch: './build',
         env: {
             'NODE_ENV': 'development',
-            'USE_WEBPACK': true,
+            'USE_WEBPACK': 'true',
         }
     });
 }
 
 
-function prodServerBuild() {
+function prodServerBuild(callback) {
     const prodServerWebpack = webpack(createServerConfig(false));
     devServerWebpack.run((error, stats) => {
         outputWebpack('prod:server', error, stats);

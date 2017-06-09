@@ -16,12 +16,15 @@ function createConfig(isDebug) {
         plugins.push(new ExtractTextPlugin('[name].css'));
         cssLoader.loader = ExtractTextPlugin.extract('style', 'css');
         sassLoader.loader = ExtractTextPlugin.extract('style', 'css!sass');
+    }else{
+        plugins.push(new webpack.HotModuleReplacementPlugin());
+        appEntry.splice(0, 0, 'webpack-hot-middleware/client');
     }
 
     return {
         devtool: devTool,
         entry: {
-            application: appEntry,
+            app: appEntry,
             vendor: vendorModules,
         },
         output: {
