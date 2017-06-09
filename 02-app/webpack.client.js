@@ -1,17 +1,28 @@
 var path = require('path');
 const dirname = path.resolve('./');
+const vendorModules = ['jquery', 'lodash'];
+var webpack = require('webpack');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 function createConfig(isDebug) {
     const devTool = isDebug ? 'eval-source-map' : 'source-map';
-    const plugins = [];
+    const plugins = [new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js')];
     const cssLoader = {test: /\.css$/, loader: 'style!css'};
     const sassLoader = {test: /\.scss$/, loader: 'style!css!sass'};
     const appEntry = ['./src/client/app.js'];
 
+    if(!isDebug){
+        plugins.push(new webpack.optimize.UglifyJsPlugin());
+        plugins.push(new ExtractTextPlugin('[name].css'));
+        cssLoader.loader = ExtractTextPlugin.extract('style', 'css');
+        sassLoader.loader = ExtractTextPlugin.extract('style', 'css!sass');
+    }
+
     return {
-        devTool: devTool,
+        devtool: devTool,
         entry: {
             application: appEntry,
+            vendor: vendorModules,
         },
         output: {
             path: path.join(dirname, 'public', 'build'),
