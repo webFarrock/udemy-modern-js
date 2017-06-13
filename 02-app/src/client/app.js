@@ -4,14 +4,15 @@ import * as services from './services';
 
 // ----------------
 // playground
-services.server.on$('test')
-	.map(d => d + ' whoa')
-	.subscribe(item => {
-		console.log(`Got ${item} from server!`);
-	})
 
-services.server.status$
-	.subscribe(status => console.log(status));
+services.server.emitAction$('login', {username: 'foo', password: 'bar'})
+	.subscribe(result => {
+		if(result.error){
+			console.log(result.error);
+		}else{
+			console.log('We are logged in');
+		}
+	});
 
 // ----------------
 // Auth

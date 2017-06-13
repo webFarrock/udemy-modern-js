@@ -4,6 +4,9 @@ import express from 'express';
 import http from 'http';
 import socketIo from 'socket.io';
 import chalk from 'chalk';
+import {Observable} from 'rxjs';
+
+import {ObservableSocket} from 'shared/observable-socket';
 
 const IsDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -11,40 +14,39 @@ const IsDevelopment = process.env.NODE_ENV !== 'production';
 // Setup
 
 const app = express();
-const server =  new http.Server(app);
+const server = new http.Server(app);
 const io = socketIo(server);
-
 
 
 // -------------------------
 // Client Webpack
 
-if(process.env.USE_WEBPACK === 'true'){
+if (process.env.USE_WEBPACK === 'true') {
 
-    let webpackMiddleware = require('webpack-dev-middleware');
-    let webpackHotMiddleware = require('webpack-hot-middleware');
-    let webpack = require('webpack');
-    let clientConfig = require('../../webpack.client');
+	let webpackMiddleware = require('webpack-dev-middleware');
+	let webpackHotMiddleware = require('webpack-hot-middleware');
+	let webpack = require('webpack');
+	let clientConfig = require('../../webpack.client');
 
 
-    const compiler = webpack(clientConfig);
-    app.use(webpackMiddleware(compiler, {
-        publicPath: '/build/',
-        stats: {
-            colors: true,
-            chunks: false,
-            assets: false,
-            timings: false,
-            modules: false,
-            hash: false,
-            version: false,
+	const compiler = webpack(clientConfig);
+	app.use(webpackMiddleware(compiler, {
+		publicPath: '/build/',
+		stats: {
+			colors: true,
+			chunks: false,
+			assets: false,
+			timings: false,
+			modules: false,
+			hash: false,
+			version: false,
 
-        },
-    }));
+		},
+	}));
 
-    app.use(webpackHotMiddleware(compiler));
+	app.use(webpackHotMiddleware(compiler));
 
-    console.log(chalk.bgRed('Using WebPack Dev Middleware! THIS IS FOR DEV ONLY!'));
+	console.log(chalk.bgRed('Using WebPack Dev Middleware! THIS IS FOR DEV ONLY!'));
 }
 
 
@@ -56,9 +58,9 @@ app.use(express.static('public'));
 const useEcternalStyles = !IsDevelopment;
 
 app.get('/', (req, res) => {
-    res.render('index', {
-        useEcternalStyles
-    });
+	res.render('index', {
+		useEcternalStyles
+	});
 })
 
 // -------------------------
@@ -68,13 +70,14 @@ app.get('/', (req, res) => {
 // -------------------------
 // Socket
 io.on('connection', socket => {
-    console.log(`Got connection from ${socket.request.connection.remoteAddress}`);
+	console.log(`Got connection from ${socket.request.connection.remoteAddress}`);
 
-    let index = 0;
 
-    setInterval(() => {
-        socket.emit('test', `On index ${index++}`);
-    }, 1000)
+	const client = new ObservableSocket(socket);
+	client.onAction('login', creds => {
+		return Observable.of({username: creds.username});
+	});
+
 });
 
 
@@ -83,9 +86,9 @@ io.on('connection', socket => {
 
 const port = process.env.PORT || 3000;
 
-(function startServer(){
-    server.listen(port, () => {
-        console.log(`Started http server on ${port}`);
-    })
+(function startServer() {
+	server.listen(port, () => {
+		console.log(`Started http server on ${port}`);
+	})
 })();
 
