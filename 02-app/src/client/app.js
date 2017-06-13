@@ -5,13 +5,11 @@ import * as services from './services';
 // ----------------
 // playground
 
-services.server.emitAction$('login', {username: 'foo', password: 'bar'})
-	.subscribe(result => {
-		if(result.error){
-			console.log(result.error);
-		}else{
-			console.log('We are logged in');
-		}
+services.server.emitAction$('login', {user: 'foo', password: 'bar'})
+	.subscribe(user => {
+		console.log('We are logged in: ' + user );
+	}, error => {
+		console.error(error);
 	});
 
 // ----------------

@@ -1,10 +1,12 @@
 import 'source-map-support/register';
+import {clientMessage} from 'shared/observable-socket';
 
 import express from 'express';
 import http from 'http';
 import socketIo from 'socket.io';
 import chalk from 'chalk';
 import {Observable} from 'rxjs';
+
 
 import {ObservableSocket} from 'shared/observable-socket';
 
@@ -75,7 +77,7 @@ io.on('connection', socket => {
 
 	const client = new ObservableSocket(socket);
 	client.onAction('login', creds => {
-		return Observable.of({username: creds.username});
+		return Observable.of(`USER:  ${creds.user}`).delay(1000);
 	});
 
 });
