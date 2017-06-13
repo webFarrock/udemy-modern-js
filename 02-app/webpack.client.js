@@ -1,6 +1,6 @@
 var path = require('path');
 const dirname = path.resolve('./');
-const vendorModules = ['jquery', 'lodash'];
+const vendorModules = ['jquery', 'lodash', 'socket.io-client', 'rxjs'];
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -40,7 +40,7 @@ function createConfig(isDebug) {
         module: {
             loaders: [
                 {test: /\.js$/, loader: 'babel', exclude: '/node_modules/'},
-                {test: /\.(png|jpg|jpeg|gif|woff|ttf|svg|woff2)$/, loader: 'url-loader?limit=512'},
+                {test: /\.(png|jpg|jpeg|gif|woff|ttf|eot|svg|woff2)/, loader: "url-loader?limit=1024"},
                 cssLoader,
                 sassLoader,
             ]
