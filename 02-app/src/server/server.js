@@ -10,6 +10,10 @@ import {Observable} from 'rxjs';
 
 import {ObservableSocket} from 'shared/observable-socket';
 
+import {UsersModule} from './modules/users';
+import {PlaylistModule} from './modules/playlist';
+import {ChatModule} from './modules/chat';
+
 const IsDevelopment = process.env.NODE_ENV !== 'production';
 
 // -------------------------
@@ -66,7 +70,16 @@ app.get('/', (req, res) => {
 })
 
 // -------------------------
+// Services
+const videoServices = [];
+const playlistRepository = {};
+
+// -------------------------
 // Modules
+const users = new UsersModule(io);
+const chat = new ChatModule(io, users);
+const playlist = new PlaylistModule(io, users, playlistRepository, videoServices);
+const modules = [users, chat, playlist]
 
 
 // -------------------------
@@ -74,11 +87,13 @@ app.get('/', (req, res) => {
 io.on('connection', socket => {
 	console.log(`Got connection from ${socket.request.connection.remoteAddress}`);
 
-
 	const client = new ObservableSocket(socket);
-	client.onAction('login', creds => {
-		return Observable.of(`USER:  ${creds.user}`).delay(1000);
-	});
+
+	for (let mod of modules)
+		mod.registerClient(client);
+
+	for (let mod of modules)
+		mod.clientRegistered(client);
 
 });
 
@@ -88,9 +103,21 @@ io.on('connection', socket => {
 
 const port = process.env.PORT || 3000;
 
-(function startServer() {
+
+function startServer() {
 	server.listen(port, () => {
 		console.log(`Started http server on ${port}`);
 	})
-})();
+};
+
+Observable.merge(...modules.map(m => m.init$()))
+	.subscribe({
+		complete(){
+			startServer();
+		},
+		error(error){
+			console.error(`Could not init module: ${error.stact || error}`);
+		}
+	});
+
 
