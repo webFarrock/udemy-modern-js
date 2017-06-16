@@ -29,3 +29,7 @@ require('./components/playlist/playlist');
 services.socket.connect();
 
 
+services.server.emitAction$('users:list')
+	.subscribe(users => console.log(users));
+
+
