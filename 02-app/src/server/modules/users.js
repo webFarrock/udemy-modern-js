@@ -2,21 +2,21 @@ import _ from 'lodash';
 
 import {ModuleBase} from '../lib/module';
 
-export class UsersModule extends ModuleBase{
+export class UsersModule extends ModuleBase {
 
-	constructor(io){
+	constructor(io) {
 		super();
 		this._io = io;
 		this._usersList = [
-			{name: 'One', color:this.getColorForUsername('One')},
-			{name: 'Two', color:this.getColorForUsername('Two')},
-			{name: 'Three', color:this.getColorForUsername('Three')},
+			{name: 'One', color: this.getColorForUsername('One')},
+			{name: 'Two', color: this.getColorForUsername('Two')},
+			{name: 'Three', color: this.getColorForUsername('Three')},
 
 
 		];
 	}
 
-	getColorForUsername(username){
+	getColorForUsername(username) {
 		let hash = _.reduce(
 			username,
 			(hash, ch) => ch.charCodeAt(0) + (hash << 6) + (hash << 16) - hash,
@@ -32,15 +32,14 @@ export class UsersModule extends ModuleBase{
 		return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 	}
 
-	registerClient(client){
+	registerClient(client) {
 
 		let index = 0;
 		setInterval(() => {
-			const username = `New user ${index}`;
+			const username = `New user ${index++}`;
 			const user = {name: username, color: this.getColorForUsername(username)}
 			client.emit('users:added', user);
 		}, 2000);
-
 
 
 		client.onActions({
