@@ -20,6 +20,7 @@ class UsersComponent extends ElementComponent{
 			.map(action => action.state.users)
 			.compSubscribe(this, users => {
 
+
 				$title.text(`${users.length} user${users.length != 1 ? 's' :  ''}`)
 
 				this.$element.empty();
