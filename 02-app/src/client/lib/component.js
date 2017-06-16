@@ -12,7 +12,7 @@ export class ComponentBase {
 		this._onDetach();
 
 		for (let handler of this._onDetachHandlers) {
-			handerl();
+			handler();
 		}
 
 		for (let child of this.children) {
